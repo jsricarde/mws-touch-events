@@ -51,6 +51,31 @@ function handleMove(evt) {
   }
 }
 
+function handleEnd(evt) {
+  evt.preventDefault();
+  log("touchend");
+  var el = document.getElementsByTagName("canvas")[ 0 ];
+  var ctx = el.getContext("2d");
+  var touches = evt.changedTouches;
+
+  for (var i = 0; i < touches.length; i++) {
+    var color = colorForTouch(touches[ i ]);
+    var idx = ongoingTouchIndexById(touches[ i ].identifier);
+
+    if (idx >= 0) {
+      ctx.lineWidth = 4;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(ongoingTouches[ idx ].pageX, ongoingTouches[ idx ].pageY);
+      ctx.lineTo(touches[ i ].pageX, touches[ i ].pageY);
+      ctx.fillRect(touches[ i ].pageX - 4, touches[ i ].pageY - 4, 8, 8);  // and a square at the end
+      ongoingTouches.splice(idx, 1);  // remove it; we're done
+    } else {
+      log("can't figure out which touch to end");
+    }
+  }
+}
+
 function handleCancel(evt) {
   evt.preventDefault();
   log("touchcancel.");
@@ -63,9 +88,9 @@ function handleCancel(evt) {
 }
 
 function colorForTouch(touch) {
-  const r = touch.identifier % 16;
-  const g = Math.floor(touch.identifier / 3) % 16;
-  const b = Math.floor(touch.identifier / 7) % 16;
+  let r = touch.identifier % 16;
+  let g = Math.floor(touch.identifier / 3) % 16;
+  let b = Math.floor(touch.identifier / 7) % 16;
   r = r.toString(16); // make it a hex digit
   g = g.toString(16); // make it a hex digit
   b = b.toString(16); // make it a hex digit
