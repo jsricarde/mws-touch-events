@@ -38,13 +38,18 @@ function handleMove(evt) {
     const color = colorForTouch(touches[ i ]);
     const idx = ongoingTouchIndexById(touches[ i ].identifier);
     if (idx >= 0) {
-      ctx.lineWidth = 4;
-      ctx.fillStyle = color;
+      log("continuing touch " + idx);
       ctx.beginPath();
+      log("ctx.moveTo(" + ongoingTouches[ idx ].pageX + ", " + ongoingTouches[ idx ].pageY + ");");
       ctx.moveTo(ongoingTouches[ idx ].pageX, ongoingTouches[ idx ].pageY);
+      log("ctx.lineTo(" + touches[ i ].pageX + ", " + touches[ i ].pageY + ");");
       ctx.lineTo(touches[ i ].pageX, touches[ i ].pageY);
-      ctx.fillRect(touches[ i ].pageX - 4, touches[ i ].pageY - 4, 8, 8);
-      ongoingTouches.splice(idx, 1);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+
+      ongoingTouches.splice(idx, 1, copyTouch(touches[ i ]));  // swap in the new touch record
+      log(".");
     } else {
       log("Can't draw with touch to end.");
     }
