@@ -31,7 +31,7 @@ function handleStart(evt) {
 function handleMove(evt) {
   evt.preventDefault();
   const el = document.getElementsByTagName('canvas')[ 0 ];
-  const ctx = el.getContext();
+  const ctx = el.getContext('2d');
   const touches = evt.changedTouches;
 
   for (let i = 0; i < touches.length; i++) {
